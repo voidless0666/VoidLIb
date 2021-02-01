@@ -1,6 +1,5 @@
 package me.voidless.voidlib;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.MessageTooLargeException;
 import org.bukkit.scoreboard.*;
@@ -52,8 +51,10 @@ public class SidebarBuilder {
     public void reset(final String name){
         this.emptyLines = 0;
         this.entries = 0;
-        final Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-        final Objective objective = scoreboard.registerNewObjective("sidebar", "dummy");
+        final Scoreboard scoreboard = player.getScoreboard();
+        final Objective objective = scoreboard.getObjective("sidebar");
+        if (objective != null) objective.unregister();
+        scoreboard.getObjective("sidebar");
         objective.setDisplayName(name);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         player.setScoreboard(scoreboard);

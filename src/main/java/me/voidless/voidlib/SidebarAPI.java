@@ -11,6 +11,14 @@ public class SidebarAPI {
     }
 
     /**
+     * Returns the library version
+     * @return The version
+     */
+    public static String getVersion(){
+        return VoidModules.version;
+    }
+
+    /**
      * Initializes the sidebar, also activates it if stop() was called
      * @param plugin The spigot plugin
      */
