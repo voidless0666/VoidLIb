@@ -32,6 +32,19 @@ public class SidebarBuilder {
     }
 
     /**
+     * Creates a sidebar for the player
+     * @param player The player of this sidebar
+     * @param name The name of sidebar
+     * @param scoreboard The scoreboard
+     */
+    public SidebarBuilder(final Player player, final String name, final Scoreboard scoreboard){
+        this.player = player;
+        this.id = player.getUniqueId();
+        this.updatableMap = new HashMap<>();
+        reset(name, scoreboard);
+    }
+
+    /**
      * Gets the sidebar owner
      * @return The owner of the sidebar
      */
@@ -54,9 +67,25 @@ public class SidebarBuilder {
     public void reset(final String name){
         this.emptyLines = 0;
         this.entries = 0;
-        final Scoreboard scoreboard = player.getScoreboard();
-        if (scoreboard == null) player.setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
-        final Objective objective = scoreboard.getObjective("sidebar");
+        Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        Objective objective = scoreboard.getObjective("sidebar");
+        if (objective == null) objective = scoreboard.registerNewObjective("sidebar", "dummy");
+        objective.setDisplayName(name);
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        player.setScoreboard(scoreboard);
+    }
+
+    /**
+     * Resets the sidebar with a new name and a specific scoreboard
+     * @param name The new name of the sidebar
+     * @param scoreboard The scoreboard
+     */
+    public void reset(final String name, Scoreboard scoreboard){
+        this.emptyLines = 0;
+        this.entries = 0;
+        if (scoreboard == null) scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+        Objective objective = scoreboard.getObjective("sidebar");
+        if (objective == null) objective = scoreboard.registerNewObjective("sidebar", "dummy");
         objective.setDisplayName(name);
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
         player.setScoreboard(scoreboard);
@@ -64,22 +93,22 @@ public class SidebarBuilder {
 
     /**
      *
-     * @param name The id of the updatable text
+     * @param id The id of the updatable text
      * @param line The text to set
      * @param slot The slot to update
      * @return Itself
      * @throws MessageTooLongException If the line length is longer than 32
      */
-    public SidebarBuilder setUpdatableText(final String name, final String line, final int slot) throws MessageTooLongException {
+    public SidebarBuilder setUpdatableText(final String id, final String line, final int slot) throws MessageTooLongException {
         if (line.length() > 32){
             throw new MessageTooLargeException("The maximum length of an line is 32.");
         }
-
         final Scoreboard scoreboard = player.getScoreboard();
         if (scoreboard.getObjectives().isEmpty()) return this;
         final Objective objective = scoreboard.getObjective("sidebar");
         if (objective == null) return this;
-        final Team team = scoreboard.registerNewTeam(name);
+        Team team = scoreboard.getTeam(id);
+        if (team == null) team = scoreboard.registerNewTeam(id);
         final String entry = getEntry();
         team.addEntry(entry);
         if (line.length() > 16){
@@ -87,7 +116,7 @@ public class SidebarBuilder {
             team.setSuffix(line.substring(16));
         } else team.setPrefix(line);
         objective.getScore(entry).setScore(16 - slot);
-        this.updatableMap.put(name, line);
+        this.updatableMap.put(id, line);
         return this;
     }
 
@@ -100,7 +129,7 @@ public class SidebarBuilder {
      */
     public SidebarBuilder setText(final String line, final int slot) throws MessageTooLongException {
         if (line.length() > 32){
-            throw new MessageTooLargeException("The maximum length of an line is 32.");
+            throw new MessageTooLongException("The maximum length of an line is 32.");
         }
         final Scoreboard scoreboard = player.getScoreboard();
         if (scoreboard.getObjectives().isEmpty()) return this;
@@ -131,16 +160,16 @@ public class SidebarBuilder {
 
     /**
      *
-     * @param name The id of the updatable text
+     * @param id The id of the updatable text
      * @param line The text to set
      * @return Itself
      * @throws MessageTooLongException If the line length is longer than 32
      */
-    public void updateText(final String name, final String line) throws MessageTooLongException {
+    public void updateText(final String id, final String line) throws MessageTooLongException {
         if (line.length() > 32){
-            throw new MessageTooLargeException("The maximum length of an line is 32.");
+            throw new MessageTooLongException("The maximum length of an line is 32.");
         }
-        this.updatableMap.put(name, line);
+        this.updatableMap.put(id, line);
     }
 
     /**

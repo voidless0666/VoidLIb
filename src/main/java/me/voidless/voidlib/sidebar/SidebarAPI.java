@@ -53,6 +53,15 @@ public class SidebarAPI {
 
     /**
      * Gets the sidebar of a player
+     * @param player The player
+     * @return The sidebar
+     */
+    public static SidebarBuilder getBuilder(final Player player){
+        return getManager().getBuilder(player.getUniqueId());
+    }
+
+    /**
+     * Gets the sidebar of a player
      * @param id The player id
      * @return The sidebar
      */
@@ -82,6 +91,15 @@ public class SidebarAPI {
      */
     public static int getActiveSidebars(){
         return getManager().getActiveSidebars();
+    }
+
+    /**
+     * Checks if the player has an sidebar
+     * @param player The player
+     * @return If the player has a sidebar
+     */
+    public static boolean hasSidebar(final Player player){
+        return getManager().hasSidebar(player.getUniqueId());
     }
 
     /**
