@@ -1,5 +1,6 @@
-package me.voidless.voidlib;
+package me.voidless.voidlib.sidebar;
 
+import me.voidless.voidlib.VoidModules;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 

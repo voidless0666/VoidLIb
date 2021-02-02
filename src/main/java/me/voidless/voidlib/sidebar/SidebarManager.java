@@ -1,4 +1,4 @@
-package me.voidless.voidlib;
+package me.voidless.voidlib.sidebar;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

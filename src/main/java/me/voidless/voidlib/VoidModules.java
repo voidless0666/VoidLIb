@@ -1,10 +1,12 @@
 package me.voidless.voidlib;
 
+import me.voidless.voidlib.sidebar.SidebarManager;
+
 /**
  * Created by Voidless#0666
  */
 public class VoidModules {
-    public static final String version = "1.0.1";
+    public static final String version = "1.0.2";
     public static VoidModules instance = null;
     public final SidebarManager sidebarManager;
 
