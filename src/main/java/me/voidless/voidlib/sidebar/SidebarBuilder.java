@@ -112,7 +112,7 @@ public class SidebarBuilder {
         final String entry = getEntry();
         team.addEntry(entry);
         if (line.length() > 16){
-            team.setPrefix(line.substring(0, 15));
+            team.setPrefix(line.substring(0, 16));
             team.setSuffix(line.substring(16));
         } else team.setPrefix(line);
         objective.getScore(entry).setScore(16 - slot);
