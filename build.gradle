@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'maven'
 }
 
 group 'me.voidless.voidlib'
@@ -12,8 +13,8 @@ allprojects {
         maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
         mavenLocal()
     }
+}
 
-    dependencies {
-        compileOnly 'org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT'
-    }
+dependencies {
+    compileOnly 'org.spigotmc:spigot:1.12.2-R0.1-SNAPSHOT'
 }
