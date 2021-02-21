@@ -3,6 +3,7 @@ package me.voidless.voidlib.sidebar;
 import me.voidless.voidlib.exceptions.MessageTooLongException;
 import me.voidless.voidlib.utils.ColorUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.MessageTooLargeException;
 import org.bukkit.scoreboard.*;
@@ -12,6 +13,10 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SidebarBuilder {
+
+    /*
+     * TODO: Implement a smarter way to inherit colors
+     */
 
     private final Player player;
     private final UUID id;
@@ -99,7 +104,11 @@ public class SidebarBuilder {
      * @return Itself
      * @throws MessageTooLongException If the line length is longer than 32
      */
-    public SidebarBuilder setUpdatableText(final String id, final String line, final int slot) throws MessageTooLongException {
+    public SidebarBuilder setUpdatableText(final String id, String line, final int slot) throws MessageTooLongException {
+        if (line.length() > 16){
+            line = line.substring(0, 16) + ChatColor.getLastColors(line.substring(0, 16)) + line.substring(16);
+        }
+
         if (line.length() > 32){
             throw new MessageTooLargeException("The maximum length of an line is 32.");
         }
@@ -165,7 +174,11 @@ public class SidebarBuilder {
      * @return Itself
      * @throws MessageTooLongException If the line length is longer than 32
      */
-    public void updateText(final String id, final String line) throws MessageTooLongException {
+    public void updateText(final String id, String line) throws MessageTooLongException {
+        if (line.length() > 16){
+            line = line.substring(0, 16) + ChatColor.getLastColors(line.substring(0, 16)) + line.substring(16);
+        }
+
         if (line.length() > 32){
             throw new MessageTooLongException("The maximum length of an line is 32.");
         }
@@ -183,7 +196,7 @@ public class SidebarBuilder {
             final String text = this.updatableMap.get(name);
             final Team team = scoreboard.getTeam(name);
             if (text.length() > 16){
-                team.setPrefix(text.substring(0, 15));
+                team.setPrefix(text.substring(0, 16));
                 team.setSuffix(text.substring(16));
             } else team.setPrefix(text);
         }
