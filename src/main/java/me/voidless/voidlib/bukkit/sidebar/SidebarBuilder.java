@@ -1,11 +1,11 @@
-package me.voidless.voidlib.sidebar;
+package me.voidless.voidlib.bukkit.sidebar;
 
 import me.voidless.voidlib.exceptions.MessageTooLongException;
-import me.voidless.voidlib.utils.ColorUtils;
+import me.voidless.voidlib.bukkit.utils.ColorUtils;
+import me.voidless.voidlib.bukkit.utils.VersionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.messaging.MessageTooLargeException;
 import org.bukkit.scoreboard.*;
 
 import java.util.HashMap;
@@ -13,9 +13,12 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SidebarBuilder {
+    private static final int maxLenth = VersionUtils.Minecraft.R1_12_2.compare(VersionUtils.getMinecraftVersion()) == VersionUtils.Result.OLDER ? 128 : 32;
+    private static final int maxSingeLenth = VersionUtils.Minecraft.R1_12_2.compare(VersionUtils.getMinecraftVersion()) == VersionUtils.Result.OLDER ? 64 : 16;
+
 
     /*
-     * TODO: Implement a smarter way to inherit colors
+     * TODO: Implement a smarter way to inherit colors, also add support for longer text using entries
      */
 
     private final Player player;
@@ -105,12 +108,12 @@ public class SidebarBuilder {
      * @throws MessageTooLongException If the line length is longer than 32
      */
     public SidebarBuilder setUpdatableText(final String id, String line, final int slot) throws MessageTooLongException {
-        if (line.length() > 16){
-            line = line.substring(0, 16) + ChatColor.getLastColors(line.substring(0, 16)) + line.substring(16);
+        if (line.length() > maxSingeLenth){
+            line = line.substring(0, maxSingeLenth) + ChatColor.getLastColors(line.substring(0, maxSingeLenth)) + line.substring(maxSingeLenth);
         }
 
-        if (line.length() > 32){
-            throw new MessageTooLargeException("The maximum length of an line is 32.");
+        if (line.length() > maxLenth){
+            throw new MessageTooLongException("The maximum length of an line is " + maxLenth + ".");
         }
         final Scoreboard scoreboard = player.getScoreboard();
         if (scoreboard.getObjectives().isEmpty()) return this;
@@ -120,9 +123,9 @@ public class SidebarBuilder {
         if (team == null) team = scoreboard.registerNewTeam(id);
         final String entry = getEntry();
         team.addEntry(entry);
-        if (line.length() > 16){
-            team.setPrefix(line.substring(0, 16));
-            team.setSuffix(line.substring(16));
+        if (line.length() > maxSingeLenth){
+            team.setPrefix(line.substring(0, maxSingeLenth));
+            team.setSuffix(line.substring(maxSingeLenth));
         } else team.setPrefix(line);
         objective.getScore(entry).setScore(16 - slot);
         this.updatableMap.put(id, line);
@@ -137,6 +140,7 @@ public class SidebarBuilder {
 +     * @throws MessageTooLongException If the line length is longer than 32
      */
     public SidebarBuilder setText(final String line, final int slot) throws MessageTooLongException {
+        // TODO: Research the max length for this
         if (line.length() > 32){
             throw new MessageTooLongException("The maximum length of an line is 32.");
         }
@@ -175,12 +179,12 @@ public class SidebarBuilder {
      * @throws MessageTooLongException If the line length is longer than 32
      */
     public void updateText(final String id, String line) throws MessageTooLongException {
-        if (line.length() > 16){
-            line = line.substring(0, 16) + ChatColor.getLastColors(line.substring(0, 16)) + line.substring(16);
+        if (line.length() > maxSingeLenth){
+            line = line.substring(0, maxSingeLenth) + ChatColor.getLastColors(line.substring(0, maxSingeLenth)) + line.substring(maxSingeLenth);
         }
 
-        if (line.length() > 32){
-            throw new MessageTooLongException("The maximum length of an line is 32.");
+        if (line.length() > maxLenth){
+            throw new MessageTooLongException("The maximum length of an line is " + maxLenth + ".");
         }
         this.updatableMap.put(id, line);
     }
@@ -195,14 +199,14 @@ public class SidebarBuilder {
         for (final String name : this.updatableMap.keySet()){
             final String text = this.updatableMap.get(name);
             final Team team = scoreboard.getTeam(name);
-            if (text.length() > 16){
-                team.setPrefix(text.substring(0, 16));
-                team.setSuffix(text.substring(16));
+            if (text.length() > maxSingeLenth){
+                team.setPrefix(text.substring(0, maxSingeLenth));
+                team.setSuffix(text.substring(maxSingeLenth));
             } else team.setPrefix(text);
         }
     }
 
-    private final String getEntry(){
+    private String getEntry(){
         final String entry;
         if (entries == 0) entry = "&0&f";
         else if (entries == 1) entry = "&1&f";

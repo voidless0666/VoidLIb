@@ -1,4 +1,4 @@
-package me.voidless.voidlib.utils;
+package me.voidless.voidlib.bukkit.utils;
 
 import org.bukkit.ChatColor;
 

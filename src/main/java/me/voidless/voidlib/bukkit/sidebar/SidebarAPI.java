@@ -1,37 +1,45 @@
-package me.voidless.voidlib.sidebar;
+package me.voidless.voidlib.bukkit.sidebar;
 
-import me.voidless.voidlib.VoidModules;
+import me.voidless.voidlib.VoidLib;
+import me.voidless.voidlib.exceptions.BukkitNotFoundException;
+import me.voidless.voidlib.bukkit.utils.VersionUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
 
 public class SidebarAPI {
-    private static SidebarManager getManager(){
-        return VoidModules.instance.sidebarManager;
-    }
+    // I think this is stupid but hey i don't know
+    private static SidebarAPI intance;
+    private final SidebarManager manager = VoidLib.instance.sidebarManager;
 
     /**
      * Returns the library version
      * @return The version
+     * @deprecated Use VoidLib.version instead
      */
+    @Deprecated
     public static String getVersion(){
-        return VoidModules.version;
+        return VoidLib.version;
     }
 
     /**
      * Initializes the sidebar, also activates it if stop() was called
      * @param plugin The spigot plugin
      */
-    public static void init(final JavaPlugin plugin){
-        VoidModules.init().sidebarManager.start(plugin);
+    public static void init(final JavaPlugin plugin) throws BukkitNotFoundException {
+        if (!VersionUtils.isBukkit()) throw new BukkitNotFoundException("Could not initialize sidebar api without bukkit.");
+        VoidLib.init().sidebarManager.start(plugin);
+        intance = new SidebarAPI();
+        VoidLib.print("Initialized SidebarAPI");
     }
 
     /**
      * Stops the sidebar managers internal loop, call init() to restart
      */
     public static void stop(){
-        getManager().stop();
+        if (intance == null) return;
+        intance.manager.stop();
     }
 
     /**
@@ -39,7 +47,8 @@ public class SidebarAPI {
      * @param builder The sidebar
      */
     public static void addSidebar(final SidebarBuilder builder){
-        getManager().addSidebar(builder);
+        if (intance == null) return;
+        intance.manager.addSidebar(builder);
     }
 
     /**
@@ -47,7 +56,8 @@ public class SidebarAPI {
      * @param builders The sidebars
      */
     public static void addSidebar(final SidebarBuilder... builders){
-        final SidebarManager sidebarManager = getManager();
+        if (intance == null) return;
+        final SidebarManager sidebarManager = intance.manager;
         for (final SidebarBuilder builder : builders) sidebarManager.addSidebar(builder);
     }
 
@@ -57,7 +67,8 @@ public class SidebarAPI {
      * @return The sidebar
      */
     public static SidebarBuilder getBuilder(final Player player){
-        return getManager().getBuilder(player.getUniqueId());
+        if (intance == null) return null;
+        return intance.manager.getBuilder(player.getUniqueId());
     }
 
     /**
@@ -66,7 +77,8 @@ public class SidebarAPI {
      * @return The sidebar
      */
     public static SidebarBuilder getBuilder(final UUID id){
-        return getManager().getBuilder(id);
+        if (intance == null) return null;
+        return intance.manager.getBuilder(id);
     }
 
     /**
@@ -74,7 +86,8 @@ public class SidebarAPI {
      * @param player The player
      */
     public static void removeSidebar(final Player player){
-        getManager().removeSidebar(player);
+        if (intance == null) return;
+        intance.manager.removeSidebar(player);
     }
 
     /**
@@ -82,7 +95,8 @@ public class SidebarAPI {
      * @param uuid The player id
      */
     public static void removeSidebar(final UUID uuid){
-        getManager().removeSidebar(uuid);
+        if (intance == null) return;
+        intance.manager.removeSidebar(uuid);
     }
 
     /**
@@ -90,7 +104,8 @@ public class SidebarAPI {
      * @return The number of active sidebars
      */
     public static int getActiveSidebars(){
-        return getManager().getActiveSidebars();
+        if (intance == null) return 0;
+        return intance.manager.getActiveSidebars();
     }
 
     /**
@@ -99,7 +114,8 @@ public class SidebarAPI {
      * @return If the player has a sidebar
      */
     public static boolean hasSidebar(final Player player){
-        return getManager().hasSidebar(player.getUniqueId());
+        if (intance == null) return false;
+        return intance.manager.hasSidebar(player.getUniqueId());
     }
 
     /**
@@ -108,6 +124,15 @@ public class SidebarAPI {
      * @return If the player has a sidebar
      */
     public static boolean hasSidebar(final UUID id){
-        return getManager().hasSidebar(id);
+        if (intance == null) return false;
+        return intance.manager.hasSidebar(id);
+    }
+
+    /**
+     * Checks if the sidebar api has initialized
+     * @return If the sidebar api is initialized
+     */
+    public static boolean hasInitialized(){
+        return intance != null;
     }
 }
