@@ -35,10 +35,12 @@ public class VersionUtils {
     public static Result compare(final String version, final String compareTo){
         final String[] strings = version.split("\\.");
         final String[] compare = compareTo.split("\\.");
-        if (strings.length == 0 && compare.length > 0) return Result.OLDER;
-        else if (compare.length == 0 && strings.length > 0) return Result.NEWER;
+        if (strings.length == 0 && compare.length == 0) return Result.INVALID;
+        else if (strings.length == 0) return Result.OLDER;
+        else if (compare.length == 0) return Result.NEWER;
         try {
             for (int i = 0; i < Math.max(strings.length, compare.length); i++){
+                if (i > strings.length || i > compare.length) break;
                 final int number = Integer.parseInt(strings[i]);
                 final int compareNumber = Integer.parseInt(compare[i]);
                 if (number > compareNumber) return Result.NEWER;
