@@ -40,7 +40,7 @@ public class VersionUtils {
         else if (compare.length == 0) return Result.NEWER;
         try {
             for (int i = 0; i < Math.max(strings.length, compare.length); i++){
-                if (i > strings.length || i > compare.length) break;
+                if (i >= strings.length || i >= compare.length) break;
                 final int number = Integer.parseInt(strings[i]);
                 final int compareNumber = Integer.parseInt(compare[i]);
                 if (number > compareNumber) return Result.NEWER;
